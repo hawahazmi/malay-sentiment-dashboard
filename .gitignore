@@ -25,20 +25,11 @@ ENV/
 .idea/tasks.xml
 
 # ===== Data Files (IMPORTANT!) =====
-*.csv
-data/raw/*
-data/processed/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 .pdf
 
 # ===== Model Files (Large Files) =====
-*.h5
-*.keras
-*.pkl
-*.bin
-*.model
-data/model/*
 !data/model/.gitkeep
 
 # ===== API Keys & Secrets (CRITICAL!) =====
