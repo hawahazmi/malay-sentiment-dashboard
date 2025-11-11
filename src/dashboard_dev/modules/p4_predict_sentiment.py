@@ -14,9 +14,6 @@ from tensorflow.keras.models import load_model
 import plotly.express as px
 import plotly.graph_objects as go
 import re
-import emoji
-import string
-import os
 from src.config import BILSTM_MODEL, TOKENIZER_PKL
 from src.preprocessing.preprocess import normalize_text, expand_slang, reduce_noise, reduce_repetitions, \
     remove_stopwords, handle_negations, handle_intensifier
@@ -55,7 +52,7 @@ def load_model_and_tokenizer():
         model = load_model(BILSTM_MODEL, custom_objects={'Attention': Attention})
         return model, tokenizer
     except Exception as e:
-        st.error(f"❌ Failed to load model/tokenizer: {e}")
+        st.error(f"Failed to load model/tokenizer: {e}")
         return None, None
 
 
@@ -63,14 +60,14 @@ def load_model_and_tokenizer():
 #  Text preprocessing
 # ------------------------------------------------------
 def clean_text(text):
+    text = reduce_noise(text)
     text = normalize_text(text)
     text = expand_slang(text)
-    text = reduce_repetitions(text)
-    text = remove_stopwords(text)
     text = translate_text_to_malay(text)
     text = handle_negations(text)
     text = handle_intensifier(text)
-    text = reduce_noise(text)
+    text = reduce_repetitions(text)
+    text = remove_stopwords(text)
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
@@ -191,7 +188,7 @@ def show(session_state):
                 st.error("CSV must contain a column named 'comment'.")
             else:
                 comments_input = df["comment"].dropna().tolist()
-                st.success(f"✅ Loaded {len(comments_input)} comments from file")
+                st.success(f"Loaded {len(comments_input)} comments from file")
 
                 # Show preview
                 with st.expander("Preview uploaded data"):
@@ -402,7 +399,7 @@ def show(session_state):
             with col_dl1:
                 csv = results.to_csv(index=False).encode("utf-8")
                 st.download_button(
-                    "📥 Download as CSV",
+                    "Download as CSV",
                     csv,
                     "sentily_predictions.csv",
                     "text/csv",
@@ -415,7 +412,7 @@ def show(session_state):
                 excel_buffer.close()
 
                 st.download_button(
-                    "📥 Download as Excel",
+                    "Download as Excel",
                     open("sentily_predictions.xlsx", "rb").read(),
                     "sentily_predictions.xlsx",
                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
