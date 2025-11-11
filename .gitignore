@@ -30,7 +30,6 @@ ENV/
 .pdf
 
 # ===== Model Files (Large Files) =====
-!data/model/.gitkeep
 
 # ===== API Keys & Secrets (CRITICAL!) =====
 .env
