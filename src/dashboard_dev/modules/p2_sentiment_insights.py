@@ -441,7 +441,8 @@ def show(session_state):
     if 'day_of_week' in comments.columns and 'hour' in comments.columns:
         heatmap_data = comments.groupby(['day_of_week', 'hour']).size().reset_index(name='count')
         heatmap_pivot = heatmap_data.pivot(index='hour', columns='day_of_week', values='count').fillna(0)
-        heatmap_pivot = heatmap_pivot[day_order]
+        day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        heatmap_pivot = heatmap_pivot.reindex(columns=day_order, fill_value=0)
 
         fig_heatmap = go.Figure(data=go.Heatmap(
             z=heatmap_pivot.values,
