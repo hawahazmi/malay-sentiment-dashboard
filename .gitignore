@@ -30,6 +30,7 @@ data/raw/*
 data/processed/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
+.pdf
 
 # ===== Model Files (Large Files) =====
 *.h5

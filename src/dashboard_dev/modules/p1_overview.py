@@ -1,5 +1,8 @@
 # src/dashboard_dev/modules/p1_overview.py
-# Enhanced Modern UI for Overview Page
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
 
 import streamlit as st
 import pandas as pd

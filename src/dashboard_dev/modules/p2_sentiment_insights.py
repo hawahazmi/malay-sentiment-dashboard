@@ -1,5 +1,8 @@
 # src/dashboard_dev/modules/p2_sentiment_insights.py
-# Enhanced Modern UI for Sentiment Insights Page
+
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from datetime import timedelta
 import streamlit as st
