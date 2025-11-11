@@ -441,7 +441,6 @@ with st.sidebar:
     st.session_state["selected_date"] = selected_date
 
     st.markdown("---")
-
     # REFRESH DATA BUTTON
     if st.button("Refresh Data", use_container_width=True):
         with st.spinner("Refreshing data..."):

@@ -91,20 +91,19 @@ def predict_sentiment(model, tokenizer, text_list):
 #  Streamlit Page
 # ------------------------------------------------------
 def show(session_state):
-    # Modern Page Title
+    # Page title
     st.markdown("""
-    <h1 style="
-        font-size: 2.8rem;
-        font-weight: 700;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #F63366 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 1rem;
-    ">AI Sentiment Classifier</h1>
-    <p style="color: #666; font-size: 1.1rem; margin-bottom: 2rem;">
-        Instantly analyze Malay language comments using our BiLSTM deep learning model
-    </p>
-    """, unsafe_allow_html=True)
+            <h1 style="
+                font-size: 2.8rem;
+                font-weight: 700;
+                color: black;
+                display: inline-block;
+                margin-bottom: 2rem;
+                will-change: transform;
+                backface-visibility: hidden;
+                transform: translateZ(0);
+            ">Sentiment Classifier</h1>
+            """, unsafe_allow_html=True)
 
     # Load model
     model, tokenizer = load_model_and_tokenizer()
@@ -388,7 +387,7 @@ def show(session_state):
                 display_results,
                 use_container_width=True,
                 hide_index=True,
-                height=400
+                height=200
             )
 
             # Download Options

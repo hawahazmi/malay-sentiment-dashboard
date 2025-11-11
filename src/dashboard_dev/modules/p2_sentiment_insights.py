@@ -13,17 +13,19 @@ import numpy as np
 
 
 def show(session_state):
-    # Modern Page Title
+    # Page title
     st.markdown("""
-    <h1 style="
-        font-size: 2.8rem;
-        font-weight: 700;
-        background: linear-gradient(90deg, #F63366 0%, #ff6b9d 50%, #667eea 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 2rem;
-    ">Sentiment Insights</h1>
-    """, unsafe_allow_html=True)
+            <h1 style="
+                font-size: 2.8rem;
+                font-weight: 700;
+                color: black;
+                display: inline-block;
+                margin-bottom: 2rem;
+                will-change: transform;
+                backface-visibility: hidden;
+                transform: translateZ(0);
+            ">Sentiment Insights</h1>
+            """, unsafe_allow_html=True)
 
     # Load data
     comments = session_state.get("filtered_comments", pd.DataFrame())
@@ -185,7 +187,7 @@ def show(session_state):
 
         top_perf = merged.sort_values("performance_score", ascending=False).head(10)
 
-        # Modern horizontal bar chart
+        # Horizontal bar chart
         fig_perf = go.Figure(go.Bar(
             x=top_perf["performance_score"],
             y=top_perf["title"],
@@ -232,7 +234,10 @@ def show(session_state):
             st.dataframe(
                 merged.sort_values("net_sentiment", ascending=False)
                 [["title", "viewcount", "likecount", "net_sentiment"]]
-                    .rename(columns={"net_sentiment": "Net Sentiment"})
+                    .rename(columns={"title": "Video",
+                                     "viewcount": "Views",
+                                     "likecount": "Likes",
+                                     "net_sentiment": "Net Sentiment"})
                     .head(5)
                     .reset_index(drop=True),
                 use_container_width=True,
@@ -254,7 +259,10 @@ def show(session_state):
             st.dataframe(
                 merged.sort_values("net_sentiment", ascending=True)
                 [["title", "viewcount", "likecount", "net_sentiment"]]
-                    .rename(columns={"net_sentiment": "Net Sentiment"})
+                    .rename(columns={"title": "Video",
+                                     "viewcount": "Views",
+                                     "likecount": "Likes",
+                                     "net_sentiment": "Net Sentiment"})
                     .head(5)
                     .reset_index(drop=True),
                 use_container_width=True,

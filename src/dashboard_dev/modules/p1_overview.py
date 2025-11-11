@@ -42,15 +42,17 @@ def render_metric_card(title, value, icon, delta=None, delta_color="normal"):
 def show(session_state):
     # Page Title with gradient
     st.markdown("""
-    <h1 style="
-        font-size: 2.8rem;
-        font-weight: 700;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 2rem;
-    ">Channel Performance Overview</h1>
-    """, unsafe_allow_html=True)
+        <h1 style="
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: black;
+            display: inline-block;
+            margin-bottom: 2rem;
+            will-change: transform;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+        ">Channel Performance Overview</h1>
+        """, unsafe_allow_html=True)
 
     # Retrieve filtered datasets
     comments = session_state.get("filtered_comments", pd.DataFrame())
@@ -99,7 +101,7 @@ def show(session_state):
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.divider()
 
-    # Sentiment Distribution with modern styling
+    # Sentiment Distribution
     st.markdown("### Sentiment Distribution Analysis")
 
     col_chart, col_stats = st.columns([2, 1])
@@ -338,48 +340,6 @@ def show(session_state):
             positive_momentum = (last_100['predicted_label'] == 'positive').mean() * 100
             st.metric("🚀 Recent Positivity", f"{positive_momentum:.0f}%",
                       help="Positive sentiment in last 100 comments")
-
-    # ===== Sentiment Timeline Sparkline =====
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("### Sentiment Timeline (Last 30 Days)")
-
-    if 'published_at' in comments.columns:
-        recent_30d = comments[comments['date'] >= (pd.Timestamp.now().date() - pd.Timedelta(days=30))].copy()
-
-        if not recent_30d.empty:
-            daily_sentiment = recent_30d.groupby('date').agg({
-                'predicted_label': lambda x: (x == 'positive').mean() * 100
-            }).reset_index()
-            daily_sentiment.columns = ['date', 'positive_pct']
-
-            fig_timeline = go.Figure()
-
-            fig_timeline.add_trace(go.Scatter(
-                x=daily_sentiment['date'],
-                y=daily_sentiment['positive_pct'],
-                mode='lines+markers',
-                name='Positive %',
-                line=dict(color='#00b894', width=3),
-                fill='tozeroy',
-                fillcolor='rgba(0, 184, 148, 0.1)',
-                marker=dict(size=6, color='#00b894')
-            ))
-
-            fig_timeline.add_hline(y=50, line_dash="dash", line_color="gray",
-                                   annotation_text="50% Baseline", annotation_position="right")
-
-            fig_timeline.update_layout(
-                height=250,
-                margin=dict(l=0, r=0, t=0, b=0),
-                xaxis=dict(showgrid=True, gridcolor='rgba(0,0,0,0.05)'),
-                yaxis=dict(showgrid=True, gridcolor='rgba(0,0,0,0.05)', range=[0, 100]),
-                hovermode='x unified',
-                paper_bgcolor='rgba(0,0,0,0)',
-                plot_bgcolor='rgba(0,0,0,0)',
-                font=dict(family="Poppins, sans-serif", size=10)
-            )
-
-            st.plotly_chart(fig_timeline, use_container_width=True)
 
     # Footer with insights
     st.markdown("""

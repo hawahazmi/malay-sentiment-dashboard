@@ -185,17 +185,19 @@ def generate_prescriptive_insights(comments_df, videos_df, min_views_threshold=1
 
 
 def show(session_state):
-    # Modern Page Title
+    # Page title
     st.markdown("""
-    <h1 style="
-        font-size: 2.8rem;
-        font-weight: 700;
-        background: linear-gradient(90deg, #F63366 0%, #ff6b9d 50%, #667eea 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 2rem;
-    ">Marketing Recommendations</h1>
-    """, unsafe_allow_html=True)
+            <h1 style="
+                font-size: 2.8rem;
+                font-weight: 700;
+                color: black;
+                display: inline-block;
+                margin-bottom: 2rem;
+                will-change: transform;
+                backface-visibility: hidden;
+                transform: translateZ(0);
+            ">Prescriptive Recommendations</h1>
+            """, unsafe_allow_html=True)
 
     comments_df = session_state.get("filtered_comments", pd.DataFrame())
     videos_df = session_state.get("filtered_videos", pd.DataFrame())
