@@ -233,7 +233,5 @@ def refresh_data():
     time.sleep(1)
 
     videos, comments = load_data()
-    rec = run_prescriptive_analysis(comments)
     st.session_state["comments"] = comments
     st.session_state["videos"] = videos
-    st.session_state["rec"] = rec
