@@ -10,6 +10,8 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 
+from src.dashboard_dev.utils import categorize_performance
+
 
 # ==========================================================
 #  PRESCRIPTIVE ANALYTICS LOGIC
@@ -37,8 +39,19 @@ def calculate_sentiment_trends(comments_df):
     sentiment_summary["positive_pct"] = (sentiment_summary["positive"] / total_comments) * 100
     sentiment_summary["negative_pct"] = (sentiment_summary["negative"] / total_comments) * 100
     sentiment_summary["neutral_pct"] = (sentiment_summary["neutral"] / total_comments) * 100
+
+    '''
     sentiment_summary["sentiment_score"] = (
             sentiment_summary["positive_pct"].fillna(0) - sentiment_summary["negative_pct"].fillna(0)
+    )
+    '''
+
+    # Normalized sentiment score
+    sentiment_summary["sentiment_score"] = np.where(
+        (sentiment_summary["positive"] + sentiment_summary["negative"]) > 0,
+        ((sentiment_summary["positive"] - sentiment_summary["negative"]) /
+         (sentiment_summary["positive"] + sentiment_summary["negative"])) * 100,
+        0
     )
 
     return sentiment_summary.fillna(0)
@@ -203,7 +216,7 @@ def show(session_state):
     videos_df = session_state.get("filtered_videos", pd.DataFrame())
 
     if comments_df.empty or videos_df.empty:
-        st.warning("Please ensure both comments and videos data are available in the dashboard.")
+        st.warning("The video does not content any comments.", )
         return
 
     try:
@@ -223,51 +236,43 @@ def show(session_state):
     total_alerts = insights_df["alarm"].sum()
 
     # ===== STRATEGIC DIRECTIVE BANNER =====
-    st.markdown("### Strategic Marketing Directive")
+    # --- PRESCRIPTIVE LOGIC BASED ON SENTIMENT + ENGAGEMENT ---
+    directive, directive_desc, directive_color, icon, actions = categorize_performance(avg_sentiment, avg_engagement)
 
-    if avg_sentiment < -5:
-        directive = "CRISIS MANAGEMENT MODE"
-        directive_color = "linear-gradient(135deg, #d63031 0%, #e17055 100%)"
-        directive_desc = "Immediate action required. Audience sentiment is critically negative. Review recent content and address concerns publicly."
-        icon = "🚨"
-    elif avg_sentiment < 5:
-        directive = "STABILIZATION PHASE"
-        directive_color = "linear-gradient(135deg, #fdcb6e 0%, #e17055 100%)"
-        directive_desc = "Neutral sentiment detected. Focus on improving content quality and audience engagement to shift perception positively."
-        icon = "⚠️"
-    elif avg_sentiment < 15:
-        directive = "GROWTH OPTIMIZATION"
-        directive_color = "linear-gradient(135deg, #ffd700 0%, #f39c12 100%)"
-        directive_desc = "Positive sentiment but room for improvement. Maintain quality while experimenting with new content formats."
-        icon = "🟡"
-    else:
-        directive = "AMPLIFICATION STRATEGY"
-        directive_color = "linear-gradient(135deg, #00b894 0%, #00cec9 100%)"
-        directive_desc = "Excellent sentiment performance. Double down on successful themes and leverage this momentum for growth."
-        icon = "✅"
-
+    # --- STREAMLIT DISPLAY BLOCK ---
     st.markdown(f"""
-    <div style="
-        background: {directive_color};
-        padding: 2rem;
-        border-radius: 20px;
-        color: white;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        margin-bottom: 2rem;
-    ">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-            <div style="flex: 1;">
-                <div style="font-size: 3rem; margin-bottom: 0.5rem;">{icon}</div>
-                <h2 style="color: white; margin: 0; font-size: 2rem;">{directive}</h2>
-                <p style="margin: 10px 0 0 0; font-size: 1.1rem; opacity: 0.95;">{directive_desc}</p>
-            </div>
-            <div style="text-align: center; padding: 0 2rem;">
-                <h1 style="color: white; font-size: 4rem; margin: 0;">{avg_sentiment:.1f}%</h1>
-                <p style="margin: 5px 0 0 0; font-size: 0.9rem; opacity: 0.9;">Avg Sentiment</p>
+        <div style="
+            background: {directive_color};
+            padding: 2rem;
+            border-radius: 20px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 2rem;
+        ">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="flex: 1;">
+                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">{icon}</div>
+                    <h2 style="color: white; margin: 0; font-size: 2rem;">{directive}</h2>
+                    <p style="margin: 10px 0 0 0; font-size: 1.1rem; opacity: 0.95;">{directive_desc}</p>
+                </div>
+                <div style="text-align: center; padding: 0 2rem;">
+                    <h1 style="color: white; font-size: 4rem; margin: 0;">{avg_engagement:.1f}%</h1>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9rem; opacity: 0.9;">Average Engagement</p>
+                </div>
+                <div style="text-align: center; padding: 0 2rem;">
+                    <h1 style="color: white; font-size: 4rem; margin: 0;">{avg_sentiment:.1f}%</h1>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9rem; opacity: 0.9;">Average Sentiment</p>
+                </div>
             </div>
         </div>
-    </div>
     """, unsafe_allow_html=True)
+
+    # --- NEXT RECOMMENDED ACTIONS BLOCK ---
+
+    st.markdown("""
+        <h3 style="margin-top: 0; font-size: 1.5rem;">🎯 Next Recommended Actions</h3>
+        <ul style="font-size: 1.1rem; line-height: 1.8; margin-top: 0.5rem;">
+    """ + "".join([f"<li>{a}</li>" for a in actions]) + "</ul>", unsafe_allow_html=True)
 
     # ===== KPI CARDS =====
     st.markdown("### 📊 Performance Metrics")

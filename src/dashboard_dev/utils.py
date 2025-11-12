@@ -235,3 +235,136 @@ def refresh_data():
     videos, comments = load_data()
     st.session_state["comments"] = comments
     st.session_state["videos"] = videos
+
+
+# ---------------------------------------------------------------
+# PRESCRIPTIVE RECOMMENDATION
+# ---------------------------------------------------------------
+def categorize_performance(avg_sentiment, avg_engagement):
+    # Thresholds
+    if avg_sentiment >= 5:
+        sentiment_category = "High"
+    elif -5 <= avg_sentiment < 5:
+        sentiment_category = "Mid"
+    elif avg_sentiment < -5:
+        sentiment_category = "Low"
+    else:
+        sentiment_category = "None"
+
+    if avg_engagement >= 70:
+        engagement_category = "High"
+    elif 30 <= avg_sentiment < 70:
+        engagement_category = "Mid"
+    elif avg_sentiment < 30:
+        engagement_category = "Low"
+    else:
+        engagement_category = "None"
+
+    # Combine to decide recommendation
+    combination = (sentiment_category, engagement_category)
+    actions = []
+
+    if combination == ("Low", "Low"):
+        directive = "Crisis & Damage Control: Total Failure"
+        directive_desc = "Low engagement with negative audience sentiment."
+        directive_color = "#b91c1c"
+        icon = "🚨"
+        actions = [
+            "Contain and remove the content from public view to prevent further brand damage.",
+            "Conduct an internal post-mortem to identify what went wrong.",
+            "Review the video to identify elements that failed completely."
+        ]
+
+    elif combination == ("Low", "Mid"):
+        directive = "Crisis & Damage Control: Contained Issue"
+        directive_desc = "Moderate engagement with negative audience sentiment"
+        directive_color = "#dc2626"
+        icon = "⚠️"
+        actions = [
+            "Engage selectively by responding to valid negative comments professionally.",
+            "Upload a positive distraction piece (e.g., blooper reel) to dilute the issue.",
+        ]
+
+    elif combination == ("Low", "High"):
+        directive = "Crisis Mode: Immediate Apology Required"
+        directive_desc = "High engagement with negative audience sentiment"
+        directive_color = "#ef4444"
+        icon = "🆘"
+        actions = [
+            "Post an immediate public statement addressing the issue.",
+            "Pause all promotions and deploy dark posts to test audience sentiment before relaunching.",
+            "Fast crisis response limits viral negativity."
+        ]
+
+    elif combination == ("High", "High"):
+        directive = "Success Amplification: Home Run"
+        directive_desc = "High engagement with positive audience sentiment"
+        directive_color = "#16a34a"
+        icon = "🏆"
+        actions = [
+            "Double down with aggressive paid promotions and user-generated content campaigns.",
+            "Celebrate the audience’s support with a thank-you post or short video."
+        ]
+
+    elif combination == ("High", "Mid"):
+        directive = "Success Amplification: Solid Performer"
+        directive_desc = "Moderate engagement with positive audience sentiment"
+        directive_color = "#22c55e"
+        icon = "🎯"
+        actions = [
+            "Boost engagement by replying to every positive comment.",
+            "Cross-promote the video across platforms."
+        ]
+
+    elif combination == ("High", "Low"):
+        directive = "Success Optimization: Hidden Gem"
+        directive_desc = "Low engagement with positive audience sentiment"
+        directive_color = "#4ade80"
+        icon = "💎"
+        actions = [
+            "Optimize title, thumbnail, and keywords to increase discoverability.",
+            "Relaunch targeted ads to new audiences."
+        ]
+
+    elif combination == ("Mid", "High"):
+        directive = "Optimization & Investigation: Polarization"
+        directive_desc = "High engagement with moderate audience sentiment"
+        directive_color = "#f59e0b"
+        icon = "⚖️"
+        actions = [
+            "Engage your audience directly through pinned comments or polls asking about mixed reactions.",
+            "Acknowledge both sides of the feedback to manage polarization and learn from it."
+        ]
+
+    elif combination == ("Mid", "Mid"):
+        directive = "Optimization: Status Quo"
+        directive_desc = "Moderate engagement with moderate audience sentiment"
+        directive_color = "#eab308"
+        icon = "🧭"
+        actions = [
+            "Experiment with small format tweaks in the next video.",
+            "Implement a stronger Call-to-Action within the video asking viewers to interact or share the video.",
+            "Collect performance data to drive iterative improvement."
+        ]
+
+    elif combination == ("Mid", "Low"):
+        directive = "Optimization: Indifference"
+        directive_desc = "Low engagement with moderate audience sentiment"
+        directive_color = "#d97706"
+        icon = "🪫"
+        actions = [
+            "Stop investing in this format and reallocate resources.",
+            "Try new creative directions (e.g., shorts, vertical video teasers) to find a resonant concept."
+        ]
+
+    else:
+        directive = "No Clear Category"
+        directive_desc = "Insufficient data to determine marketing recommendation."
+        directive_color = "#9ca3af"
+        icon = "❓"
+        actions = [
+            "Wait for the video to collect sufficient data."
+        ]
+
+    return directive, directive_desc, directive_color, icon, actions
+
