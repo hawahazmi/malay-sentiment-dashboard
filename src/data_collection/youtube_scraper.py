@@ -16,7 +16,8 @@ def log(msg):
 # ----------------------- CLIENT SETUP ------------------------
 def youtube_client(api_key):
     if not api_key:
-        raise RuntimeError("Missing YouTube API Key. Please set YT_API_KEY in .env.")
+        raise RuntimeError("Missing YouTube API Key."
+                           "Please set YT_API_KEY in .env.")
     return build("youtube", "v3", developerKey=api_key)
 
 

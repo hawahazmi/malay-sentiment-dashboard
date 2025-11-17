@@ -253,9 +253,9 @@ def categorize_performance(avg_sentiment, avg_engagement):
 
     if avg_engagement >= 70:
         engagement_category = "High"
-    elif 30 <= avg_sentiment < 70:
+    elif 30 <= avg_engagement < 70:
         engagement_category = "Mid"
-    elif avg_sentiment < 30:
+    elif avg_engagement < 30:
         engagement_category = "Low"
     else:
         engagement_category = "None"

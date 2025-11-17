@@ -382,9 +382,9 @@ with st.sidebar:
         "",
         [
             "Overview",
-            "Sentiment Insights",
-            "Prescriptive Recommendations",
-            "Sentiment Classifier",
+            "Audience Sentiment Insights",
+            "Marketing Recommendations",
+            "Advanced Sentiment Analyzer",
         ],
         label_visibility="collapsed",
     )
@@ -500,11 +500,11 @@ from src.dashboard_dev.modules import (
 if page == "Overview":
     p1_overview.show(st.session_state)
 
-elif page == "Sentiment Insights":
+elif page == "Audience Sentiment Insights":
     p2_sentiment_insights.show(st.session_state)
 
-elif page == "Prescriptive Recommendations":
+elif page == "Marketing Recommendations":
     p3_presc_rec.show(st.session_state)
 
-elif page == "Sentiment Classifier":
+elif page == "Advanced Sentiment Analyzer":
     p4_predict_sentiment.show(st.session_state)

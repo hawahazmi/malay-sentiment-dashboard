@@ -16,15 +16,13 @@ EN_TO_MY = {
     "ok": "okey",
     "okay": "okey",
     "sure": "baiklah",
-
-    # Positive sentiments
     "love": "sayang",
     "like": "suka",
     "good": "baik",
     "great": "hebat",
     "awesome": "hebat gila",
     "cool": "best",
-    "wow": "wow",
+    "wow": "kagum",
     "omg": "terkejut",
     "beautiful": "cantik",
     "handsome": "kacak",
@@ -41,10 +39,8 @@ EN_TO_MY = {
     "respect": "hormat",
     "support": "sokong",
     "proud": "bangga",
-    "good job": "kerja bagus",
+    "good job": "syabas",
     "well done": "tahniah",
-
-    # Negative sentiments
     "bad": "buruk",
     "boring": "membosankan",
     "bored": "bosan",
@@ -62,8 +58,6 @@ EN_TO_MY = {
     "trash": "sampah",
     "lame": "lemah",
     "lazy": "malas",
-
-    # Movie & Film context
     "movie": "filem",
     "film": "filem",
     "show": "rancangan",
@@ -91,9 +85,6 @@ EN_TO_MY = {
     "vfx": "kesan visual",
     "bloopers": "adegan lucu",
     "scene cut": "potongan babak",
-
-    # YouTube / Social Media
-    "youtube": "youtube",
     "video": "video",
     "channel": "saluran",
     "subscribe": "langgan",
@@ -119,17 +110,13 @@ EN_TO_MY = {
     "influencer": "pempengaruh",
     "collab": "kolaborasi",
     "behind the scenes": "di sebalik tabir",
-
-    # Emotions and expressions
     "lol": "ketawa",
     "lmao": "gelak kuat",
     "rofl": "gelak guling",
     "haha": "ketawa",
     "hehe": "senyum",
     "wtf": "apa ni",
-    "eh": "eh",
     "meh": "tak bagus",
-    "haih": "mengeluh",
     "sigh": "mengeluh",
     "idk": "tak tahu",
     "ikr": "betul tu",
@@ -138,13 +125,9 @@ EN_TO_MY = {
     "idc": "tak kisah",
     "smh": "geleng kepala",
     "tbh": "sejujurnya",
-    "bruh": "adoi",
-    "bro": "bro",
-    "sis": "sis",
+    "bruh": "aduhai",
     "dude": "kawan",
     "fam": "kawan-kawan",
-
-    # Time / event words
     "today": "hari ini",
     "yesterday": "semalam",
     "tomorrow": "esok",
@@ -158,6 +141,10 @@ EN_TO_MY = {
     "next": "seterusnya",
     "before": "sebelum",
     "after": "lepas",
+    "last": "akhir",
+    "selfish": "pentingkan diri sendiri",
+    "self defence": "seni mempertahankan diri",
+    "tips": "nasihat"
 }
 
 

@@ -4,6 +4,8 @@ import json
 import emoji
 from src.config import SLANG_JSON, EMOJI_JSON, STOPWORDS_JSON
 
+from src.preprocessing.translator import translate_text_to_malay
+
 
 # =============================
 # Load dictionaries
@@ -41,7 +43,9 @@ MENTION_RE = re.compile(r"@\w+")
 HASHTAG_RE = re.compile(r"#\w+")
 NON_ALPHANUM = re.compile(r"[^a-zA-Z\u00C0-\u017F\s]")
 MULTISPACE_RE = re.compile(r"\s+")
-REPEATED_CHAR_RE = re.compile(r"(.)\1{2,}")  # "heyyy" → "hey"
+# Only collapse repeated characters at the END of a word
+REPEATED_CHAR_END_RE = re.compile(r'(\w*?)(\w)\2+$')
+
 
 # Negation patterns
 NEGATION_WORDS = ["tak", "tidak", "bukan", "jgn", "jangan"]
@@ -65,19 +69,50 @@ def emoji_to_malay(text: str) -> str:
     return text
 
 
+def handle_kata_ganda(text: str) -> str:
+    # Pattern: word + digit "2"
+    pattern = r"\b([a-zA-Z]+)2\b"
+
+    def expand(match):
+        word = match.group(1)
+        return f"{word}-{word}"
+
+    return re.sub(pattern, expand, text)
+
+
+def remove_trailing_repeats(word: str) -> str:
+    """Remove only trailing repeated characters at end of a word."""
+    return REPEATED_CHAR_END_RE.sub(lambda m: m.group(1) + m.group(2), word)
+
+
+def reduce_repetitions(text):
+    new_words = []
+    for w in text.split():
+        new_words.append(remove_trailing_repeats(w))
+    return " ".join(new_words)
+
+
 def normalize_text(t: str) -> str:
-    """Normalize and clean social media text."""
     if not isinstance(t, str) or not t.strip():
         return ""
 
+    # lowercasing
     txt = t.strip().lower()
+    # separate x from words when it starts with x (xnak, xdpt)
+    txt = re.sub(r"\bx([a-zA-Z])", r"x \1", txt)
+    # replace emoji
     txt = emoji_to_malay(txt)
+    # remove URL
     txt = URL_RE.sub(" ", txt)
+    # remove mention
     txt = MENTION_RE.sub(" ", txt)
+    # remove hashtag
     txt = HASHTAG_RE.sub(" ", txt)
+    # remove numbers
     txt = re.sub(r"\d+", " ", txt)
+    # remove non-characters
     txt = NON_ALPHANUM.sub(" ", txt)
-    txt = REPEATED_CHAR_RE.sub(r"\1", txt)
+    # remove extra space
     txt = MULTISPACE_RE.sub(" ", txt).strip()
     return txt
 
@@ -88,13 +123,6 @@ def expand_slang(text: str):
         return text
     words = text.split()
     return " ".join([SLANG.get(w, w) for w in words])
-
-
-def reduce_repetitions(text: str) -> str:
-    if not text:
-        return text
-    # Replaces 'aaat' with 'at', 'bbbb' with 'b'
-    return REPEATED_CHAR_RE.sub(r"\1", text)
 
 
 def handle_negations(text: str, tag_negation: bool = True) -> str:
@@ -156,8 +184,45 @@ def remove_stopwords(text: str):
     return " ".join(words)
 
 
+keep_single = {"x", "u", "n", "k"}
+
+
 def reduce_noise(text: str) -> str:
-    txt = re.sub(r"\b[a-zA-Z]\b", " ", text)
-    txt = re.sub(r"\s{2,}", " ", txt)
-    return txt.strip()
+    return " ".join(
+        w if not (len(w) == 1 and w.lower() not in keep_single) else ""
+        for w in text.split()
+    )
+
+
+if __name__ == "__main__":
+    text = input("Enter malay sentence: ")
+    raw_text = str(text)
+
+    ganda = handle_kata_ganda(raw_text)
+    normalize = normalize_text(ganda)
+    slang1 = expand_slang(normalize)
+    remove_repeat = reduce_repetitions(slang1)
+    slang2 = expand_slang(remove_repeat)
+    negation = handle_negations(slang2)
+    intensifier = handle_intensifier(negation)
+    translate = translate_text_to_malay(intensifier)
+    stopword = remove_stopwords(translate)
+    reduce_noise = reduce_noise(stopword)
+
+    print("Raw:\t\t\t\t\t\t\t\t\t\t", raw_text)
+    print("After handling informal kata ganda:\t\t\t", ganda)
+    print("After normalization:\t\t\t\t\t\t", normalize)
+    print("After first slang handling:\t\t\t\t\t", slang1)
+    print("After removing repetitive characters at end:", remove_repeat)
+    print("After second slang handling:\t\t\t\t", slang2)
+    print("After negation handling:\t\t\t\t\t", negation)
+    print("After intensifier handling:\t\t\t\t\t", intensifier)
+    print("After english to malay translation:\t\t\t", translate)
+    print("After stopwords removal:\t\t\t\t\t", stopword)
+    print("After noise reduction:\t\t\t\t\t\t", reduce_noise)
+
+
+
+
+
 

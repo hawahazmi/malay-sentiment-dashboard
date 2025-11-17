@@ -24,7 +24,7 @@ def show(session_state):
                 will-change: transform;
                 backface-visibility: hidden;
                 transform: translateZ(0);
-            ">Sentiment Insights</h1>
+            ">Audience Sentiment Insights</h1>
             """, unsafe_allow_html=True)
 
     # Load data

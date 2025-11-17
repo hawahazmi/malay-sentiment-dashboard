@@ -9,7 +9,8 @@ from src.preprocessing.preprocess import (
     remove_stopwords,
     reduce_noise,
     handle_intensifier,
-    reduce_repetitions
+    reduce_repetitions,
+    handle_kata_ganda
 )
 
 
@@ -25,15 +26,30 @@ def preprocess_training_file(inpath=os.path.join(DATA_RAW, "training_labelled_se
 
     print(f"Cleaning labelled training data ({len(df)} rows)...")
 
+    '''
+    ganda = handle_kata_ganda(raw_text)
+    normalize = normalize_text(ganda)
+    slang1 = expand_slang(normalize)
+    remove_repeat = reduce_repetitions(slang1)
+    slang2 = expand_slang(remove_repeat)
+    negation = handle_negations(slang2)
+    intensifier = handle_intensifier(negation)
+    translate = translate_text_to_malay(intensifier)
+    stopword = remove_stopwords(translate)
+    reduce_noise = reduce_noise(stopword)
+    '''
+
     df["text_clean"] = df["comment"].astype(str)
-    df["text_clean"] = df["text_clean"].apply(reduce_noise)
+    df["text_clean"] = df["text_clean"].apply(handle_kata_ganda)
     df["text_clean"] = df["text_clean"].apply(normalize_text)
-    df["text_clean"] = df["text_clean"].apply(translate_text_to_malay)
+    df["text_clean"] = df["text_clean"].apply(expand_slang)
+    df["text_clean"] = df["text_clean"].apply(reduce_repetitions)
     df["text_clean"] = df["text_clean"].apply(expand_slang)
     df["text_clean"] = df["text_clean"].apply(lambda x: handle_negations(x, tag_negation=True))
     df["text_clean"] = df["text_clean"].apply(handle_intensifier)
-    df["text_clean"] = df["text_clean"].apply(reduce_repetitions)
+    df["text_clean"] = df["text_clean"].apply(translate_text_to_malay)
     df["text_clean"] = df["text_clean"].apply(remove_stopwords)
+    df["text_clean"] = df["text_clean"].apply(reduce_noise)
 
     df = df.dropna(subset=["text_clean"])
     df = df[df["text_clean"].str.strip() != ""]

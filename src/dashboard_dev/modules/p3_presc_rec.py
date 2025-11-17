@@ -209,7 +209,7 @@ def show(session_state):
                 will-change: transform;
                 backface-visibility: hidden;
                 transform: translateZ(0);
-            ">Prescriptive Recommendations</h1>
+            ">Marketing Recommendations</h1>
             """, unsafe_allow_html=True)
 
     comments_df = session_state.get("filtered_comments", pd.DataFrame())

@@ -9,7 +9,8 @@ from src.preprocessing.preprocess import (
     remove_stopwords,
     reduce_noise,
     handle_intensifier,
-    reduce_repetitions
+    reduce_repetitions,
+    handle_kata_ganda
 )
 
 
@@ -27,32 +28,17 @@ def preprocess_comments_file(inpath=COMMENTS_CSV, outpath=CLEANED_COMMENTS):
 
     df["text_clean"] = df["text"].astype(str)
 
-    # Reduce noise (extra chars, single letters, etc.)
+    df["text_clean"] = df["text_clean"].apply(handle_kata_ganda)
+    df["text_clean"] = df["text_clean"].apply(normalize_text)
+    df["text_clean"] = df["text_clean"].apply(expand_slang)
+    df["text_clean"] = df["text_clean"].apply(reduce_repetitions)
+    df["text_clean"] = df["text_clean"].apply(expand_slang)
+    df["text_clean"] = df["text_clean"].apply(lambda x: handle_negations(x, tag_negation=True))
+    df["text_clean"] = df["text_clean"].apply(handle_intensifier)
+    df["text_clean"] = df["text_clean"].apply(translate_text_to_malay)
+    df["text_clean"] = df["text_clean"].apply(remove_stopwords)
     df["text_clean"] = df["text_clean"].apply(reduce_noise)
 
-    # Normalize text (lowercasing + basic cleaning + emoji conversion)
-
-    df["text_clean"] = df["text_clean"].apply(normalize_text)
-
-    # Translate English → Malay for Manglish or English comments
-    df["text_clean"] = df["text_clean"].apply(translate_text_to_malay)
-
-    # Expand Malay slang (e.g., "xnak" → "tak nak")
-    df["text_clean"] = df["text_clean"].apply(expand_slang)
-
-    # Handle negations and 'x' prefix (e.g., "xbest" → "NOT_best")
-    df["text_clean"] = df["text_clean"].apply(lambda x: handle_negations(x, tag_negation=True))
-
-    # Handle kata penguat (intensifiers like "sangat", "amat", "terlalu")
-    df["text_clean"] = df["text_clean"].apply(handle_intensifier)
-
-    # Remove repetitions
-    df["text_clean"] = df["text_clean"].apply(reduce_repetitions)
-
-    # Step 6: Remove Malay + English stopwords
-    df["text_clean"] = df["text_clean"].apply(remove_stopwords)
-
-    # Final cleaning: remove blanks
     df = df.dropna(subset=["text_clean"])
     df = df[df["text_clean"].str.strip() != ""]
 

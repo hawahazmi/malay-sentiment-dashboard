@@ -6,7 +6,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 import streamlit as st
 import numpy as np
 import pandas as pd
-import tensorflow as tf
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import tensorflow.keras.backend as K
 from tensorflow.keras.layers import Layer
@@ -15,8 +14,16 @@ import plotly.express as px
 import plotly.graph_objects as go
 import re
 from src.config import BILSTM_MODEL, TOKENIZER_PKL
-from src.preprocessing.preprocess import normalize_text, expand_slang, reduce_noise, reduce_repetitions, \
-    remove_stopwords, handle_negations, handle_intensifier
+from src.preprocessing.preprocess import (
+    normalize_text,
+    expand_slang,
+    handle_negations,
+    remove_stopwords,
+    reduce_noise,
+    handle_intensifier,
+    reduce_repetitions,
+    handle_kata_ganda
+)
 from src.preprocessing.translator import translate_text_to_malay
 
 
@@ -60,14 +67,17 @@ def load_model_and_tokenizer():
 #  Text preprocessing
 # ------------------------------------------------------
 def clean_text(text):
-    text = reduce_noise(text)
+    raw_text = str(text)
+    text = handle_kata_ganda(raw_text)
     text = normalize_text(text)
     text = expand_slang(text)
-    text = translate_text_to_malay(text)
+    text = reduce_repetitions(text)
+    text = expand_slang(text)
     text = handle_negations(text)
     text = handle_intensifier(text)
-    text = reduce_repetitions(text)
+    text = translate_text_to_malay(text)
     text = remove_stopwords(text)
+    text = reduce_noise(text)
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
@@ -102,7 +112,7 @@ def show(session_state):
                 will-change: transform;
                 backface-visibility: hidden;
                 transform: translateZ(0);
-            ">Sentiment Classifier</h1>
+            ">Advanced Sentiment Analyzer</h1>
             """, unsafe_allow_html=True)
 
     # Load model

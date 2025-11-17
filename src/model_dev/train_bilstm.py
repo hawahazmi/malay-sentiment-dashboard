@@ -154,7 +154,7 @@ def train_model(
 
     # Split data
     X_train, X_val, y_train, y_val = train_test_split(
-        X, y_cat, test_size=0.25, random_state=42, stratify=y_num
+        X, y_cat, test_size=0.20, random_state=42, stratify=y_num
     )
 
     # Build and Compile Model
